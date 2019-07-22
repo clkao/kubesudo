@@ -26,7 +26,7 @@ kubectl config view --flatten --minify > $TMPKUBE
 
 export KUBECONFIG=$TMPKUBE
 
-SECRET=$(kubectl -n $NAMESPACE get sa $SA -o go-template='{{range .secrets}}{{.name}}{{end}}')
+SECRET=$(kubectl -n $NAMESPACE get sa $SA -o go-template='{{range .secrets}}{{println .name}}{{end}}' | grep token)
 TOKEN=$(kubectl -n $NAMESPACE get secret ${SECRET} -o go-template='{{.data.token}}')
 
 kubectl config set-credentials kubesudo:$NAMESPACE:$SA \
