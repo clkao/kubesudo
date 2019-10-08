@@ -20,6 +20,11 @@ else
     NAMESPACE=$(kubectl config view --minify --output 'jsonpath={..namespace}')
 fi
 
+if [ -z "$NAMESPACE" ]
+then
+    NAMESPACE=default
+fi
+
 TMPKUBE=$(mktemp)
 
 kubectl config view --flatten --minify > $TMPKUBE
