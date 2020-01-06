@@ -35,7 +35,7 @@ SECRET=$(kubectl -n $NAMESPACE get sa $SA -o go-template='{{range .secrets}}{{pr
 TOKEN=$(kubectl -n $NAMESPACE get secret ${SECRET} -o go-template='{{.data.token}}')
 
 kubectl config set-credentials kubesudo:$NAMESPACE:$SA \
-    --token=`echo ${TOKEN} | base64 -D` > /dev/null
+    --token=`echo ${TOKEN} | base64 -d` > /dev/null
 
 kubectl config set-context $(kubectl config current-context) --user=kubesudo:$NAMESPACE:$SA > /dev/null
 
