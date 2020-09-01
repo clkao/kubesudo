@@ -34,11 +34,18 @@ export KUBECONFIG=$TMPKUBE
 SECRET=$(kubectl -n $NAMESPACE get sa $SA -o go-template='{{range .secrets}}{{println .name}}{{end}}' | grep token)
 TOKEN=$(kubectl -n $NAMESPACE get secret ${SECRET} -o go-template='{{.data.token}}')
 
+if [ "`uname`" = "Darwin" ] ; then
+	TOKEN=`echo ${TOKEN} | base64 -D`
+else
+	TOKEN=`echo ${TOKEN} | base64 -d`
+fi
+
 kubectl config set-credentials kubesudo:$NAMESPACE:$SA \
-    --token=`echo ${TOKEN} | base64 -D` > /dev/null
+    --token=${TOKEN} > /dev/null
 
 kubectl config set-context $(kubectl config current-context) --user=kubesudo:$NAMESPACE:$SA > /dev/null
 
 kubectl --kubeconfig=$TMPKUBE $@
 
 rm $TMPKUBE
+
